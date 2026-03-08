@@ -1,40 +1,47 @@
+[build-system]
+build-backend = "uv_build"
+requires = [ "uv-build>=0.9.22,<0.10" ]
+
 [project]
 name = "anyfetch"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "envcat", email = "266045439+envcat@users.noreply.github.com" }
-]
+authors = [ { name = "envcat", email = "266045439+envcat@users.noreply.github.com" } ]
 requires-python = ">=3.13"
-dependencies = [
-    "cyclopts>=4.8.0",
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
-
-[build-system]
-requires = ["uv_build>=0.9.22,<0.10.0"]
-build-backend = "uv_build"
-
-[project.scripts]
-anyfetch = "anyfetch.main:app"
-
-[tool.pyright]
-typeCheckingMode = "standard"
-include = ["src/*"]
-venvPath = "."
-venv = ".venv"
+dependencies = [
+  "cyclopts>=4.8",
+  "platformdirs>=4.9.4",
+  "tomlkit>=0.14",
+]
+scripts.anyfetch = "anyfetch.main:app"
 
 [tool.ruff]
 line-length = 120
+lint.select = [
+  "B",  # flake8-bugbear
+  "C4", # flake8-comprehensions
+  "E",  # pycodestyle errors
+  "F",  # pyflakes
+  "I",  # isort
+  "UP", # pyupgrade
+  "W",  # pycodestyle warnings
+]
 
-[tool.ruff.lint]
-select = ["E", "F", "I", "ASYNC", "UP"]
+[tool.pyright]
+typeCheckingMode = "standard"
+include = [ "src/*" ]
+venvPath = "."
+venv = ".venv"
 
 [tool.rumdl]
-disable = ["MD013"]
-include = ["docs/*.md", "README.md"]
-exclude = [".git", "node_modules"]
+disable = [ "MD013" ]
+include = [ "docs/*.md", "README.md" ]
+exclude = [ ".git", "node_modules" ]
 ignore-gitignore = false
-
-[tool.rumdl.MD044]
-names = ["rumdl", "Markdown", "GitHub", "JavaScript", "Node.js", "TypeScript"]
+MD044.names = [ "rumdl", "Markdown", "GitHub", "JavaScript", "Node.js", "TypeScript" ]
