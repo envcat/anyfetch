@@ -1,5 +1,5 @@
 [project]
-name = "anyfetch"
+name = "anyfecth"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -7,8 +7,33 @@ authors = [
     { name = "envcat", email = "266045439+envcat@users.noreply.github.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+]
 
 [build-system]
 requires = ["uv_build>=0.9.22,<0.10.0"]
 build-backend = "uv_build"
+
+[project.scripts]
+anyfecth = "anyfecth.main:app"
+
+[tool.pyright]
+typeCheckingMode = "standard"
+include = ["src/*"]
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "ASYNC", "UP"]
+
+[tool.rumdl]
+disable = ["MD013"]
+include = ["docs/*.md", "README.md"]
+exclude = [".git", "node_modules"]
+ignore-gitignore = false
+
+[tool.rumdl.MD044]
+names = ["rumdl", "Markdown", "GitHub", "JavaScript", "Node.js", "TypeScript"]
