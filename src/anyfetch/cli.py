@@ -33,7 +33,7 @@ def main():
         ),
         info=InfoConfig(
             separator=": ",
-            order=["title", "cpu", "memory"],
+            order=["title", "CPU", "memory"],
             color=InfoColorConfig(keys="blue", title="red", separator="blue"),
         ),
     )
