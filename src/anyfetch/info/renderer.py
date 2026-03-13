@@ -6,7 +6,7 @@ from anyfetch.config import InfoConfig
 
 @dataclass
 class InfoRenderer:
-    modules: dict
+    modules: list
     cfg: InfoConfig
     colorizer: InfoColorizer
 
