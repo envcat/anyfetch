@@ -16,10 +16,14 @@ classifiers = [
 ]
 dependencies = [
   "cyclopts>=4.8",
+  "distro>=1.9",
   "platformdirs>=4.9.4",
+  "psutil>=7.2.2",
+  "py-cpuinfo>=9",
+  "rich>=14.3.3",
   "tomlkit>=0.14",
 ]
-scripts.anyfetch = "anyfetch.main:app"
+scripts.anyfetch = "anyfetch.cli:app"
 
 [tool.ruff]
 line-length = 120
