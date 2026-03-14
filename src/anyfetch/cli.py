@@ -1,6 +1,5 @@
 from cyclopts import App
 
-from anyfetch._constants import CONFIG_FILE_PATH
 from anyfetch.color.colorizer import InfoColorizer, LogoColorizer
 from anyfetch.color.engine import ANSIColorEngine
 from anyfetch.config import Config, ImageLogoConfig, InfoColorConfig, InfoConfig, LogoColorConfig, LogoConfig
@@ -19,6 +18,21 @@ from anyfetch.logo.factory import LogoFactory
 from anyfetch.logo.renderer import LogoRenderer
 from anyfetch.renderer import Renderer
 
+
+def build_renderer(config: Config) -> Renderer:
+    engine = ANSIColorEngine()
+    logo_strategy = LogoFactory.create(config.logo)
+    logo_colorizer = LogoColorizer(config.logo.color, engine)
+    logo_renderer = LogoRenderer(logo_strategy, logo_colorizer)
+
+    info_modules = [InfoRegistry.create(info_module) for info_module in config.info.order]
+    info_colorizer = InfoColorizer(config.info.color, engine)
+    info_renderer = InfoRenderer(info_modules, config.info, info_colorizer)
+
+    layout = LeftLayout()
+    return Renderer(logo_renderer, info_renderer, layout)
+
+
 app = App(help="Anyfetch is a tool for fetching system information and displaying them in a pretty way.")
 
 
@@ -26,8 +40,6 @@ app = App(help="Anyfetch is a tool for fetching system information and displayin
 def main():
     for module in [UserInfo, CPUInfo, MemoryInfo, DiskInfo, UptimeInfo, ShellInfo, OSInfo, KernalInfo]:
         InfoRegistry.register(module)
-
-    print(CONFIG_FILE_PATH)
 
     config = Config(
         logo=LogoConfig(
@@ -43,18 +55,7 @@ def main():
         ),
     )
 
-    engine = ANSIColorEngine()
-
-    logo_strategy = LogoFactory.create(config.logo)
-    logo_colorizer = LogoColorizer(config.logo.color, engine)
-    logo_renderer = LogoRenderer(logo_strategy, logo_colorizer)
-
-    modules = [InfoRegistry.create(k) for k in config.info.order]
-    info_colorizer = InfoColorizer(config.info.color, engine)
-    info_renderer = InfoRenderer(modules, config.info, info_colorizer)
-
-    layout = LeftLayout()
-    renderer = Renderer(logo_renderer, info_renderer, layout)
+    renderer = build_renderer(config)
     renderer.render()
 
 
