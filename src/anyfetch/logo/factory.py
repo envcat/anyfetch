@@ -9,23 +9,23 @@ from anyfetch.logo.source.image_logo import ImageLogo
 
 class LogoFactory:
     @staticmethod
-    def create(cfg: LogoConfig):
-        if cfg.source.startswith("ascii"):
-            distro = "DemoLinux" if cfg.source == "ascii_auto" else cfg.source.replace("ascii_", "")
+    def create(config: LogoConfig):
+        if config.source.startswith("ascii"):
+            distro = "DemoLinux" if config.source == "ascii_auto" else config.source.replace("ascii_", "")
             return AsciiLogo(distro)
-        elif cfg.source == "image":
-            if cfg.image is None:
+        elif config.source == "image":
+            if config.image is None:
                 raise ValueError("Image logo source requires image configuration")
-            if cfg.image.protocol == "kitty":
+            if config.image.protocol == "kitty":
                 proto = KittyProtocol()
-            elif cfg.image.protocol == "sixel":
+            elif config.image.protocol == "sixel":
                 proto = SixelProtocol()
-            elif cfg.image.protocol == "iterm":
+            elif config.image.protocol == "iterm":
                 proto = ItermProtocol()
             else:
                 raise ValueError("Unknown protocol")
-            return ImageLogo(cfg.image.path, proto)
-        elif cfg.source == "none":
+            return ImageLogo(config.image.path, proto)
+        elif config.source == "none":
             return EmptyLogo()
         else:
             raise ValueError("Unknown logo source")
