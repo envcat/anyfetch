@@ -12,4 +12,7 @@ class InfoRegistry:
 
     @classmethod
     def create(cls, key) -> InfoModule:
-        return cls.modules[key]()
+        try:
+            return cls.modules[key]()
+        except KeyError as e:
+            raise KeyError(f"Unknown info module key: {key}") from e
