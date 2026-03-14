@@ -1,0 +1,82 @@
+[logo]
+source = "ascii_auto"       # ascii_auto, ascii_<distro>, ascii_txt (paste here directly), <image_or_txt_path>, none
+position = "left"           # left, right, top, bottom
+
+[logo.padding]
+top = 0                     # Top padding
+left = 0                    # Left padding
+right = 2                   # Right padding
+
+[logo.color]                # Override logo colors
+"color-1" = "blue"
+"color-2" = "green"
+"color-3" = "red"
+
+[logo.image]                # Only apply for image type logo
+protocol = "kitty"          # kitty, sixel, iterm
+width = "auto"              # auto, <width>
+height = "auto"             # auto, <height>
+
+[info]
+separator = ": "            # Separator between keys and values
+enable-stat = false
+enable-errors = false
+order = [    
+    "title",
+    "underline",
+    "distro",
+    "model",
+    "kernal",
+    "uptime",
+    "packages",
+    "shell",
+    "resolution",
+    "de",
+    "wm",
+    "wm_theme",
+    "theme",
+    "icons",
+    "term",
+    "term_font",
+    "cpu",
+    "gpu",
+    "memory",
+    "gpu_driver",
+    "cpu_usage",
+    "disk",
+    "battery",
+    "font",
+    "song",
+    "local_ip",
+    "public_ip",
+    "users",
+    "locale",
+    "colors"
+]
+
+[info.color]
+keys = "blue"               # Key color
+title = "red"               # Title color
+separator = "blue"          # Separator color
+normal-temp = "green"       # Normal temperature color
+warn-temp = "yellow"        # Warning temperature color
+crit-temp = "red"           # Critical temperature color
+
+[info.size]
+binary-prefix = "iec"       # "iec", "si", "jedec"
+max-prefix = "YB"           # "B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
+ndigits = 2                 # Number of digits after the decimal point(0~9)
+
+[info.temp]
+unit = "c"                  # "c", "f"
+ndigits = 1                 # Number of digits after the decimal point(0~9)
+threshold = 60              # Temperature threshold for warning color
+warn = 80                   # Warning temperature
+crit = 90                   # Critical temperature
+
+[info.percent]
+ndigits = 0                 # Number of digits after the decimal point(0~9)
+color = "green"             # Color: green, yellow, red, etc.
+
+[info.freq]
+ndigits = 2                 # Number of digits after the decimal point(0~9)
