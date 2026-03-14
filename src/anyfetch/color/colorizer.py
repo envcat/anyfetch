@@ -1,4 +1,4 @@
-from attr import dataclass
+from dataclasses import dataclass
 
 from anyfetch.color.engine import ColorEngine
 from anyfetch.config import InfoColorConfig, LogoColorConfig
