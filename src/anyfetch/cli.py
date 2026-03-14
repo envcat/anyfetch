@@ -42,7 +42,7 @@ def main():
         ),
         info=InfoConfig(
             separator=": ",
-            order=["User", "OS", "Kernal", "CPU", "Memory", "Disk", "Shell", "Uptime"],
+            order=["User", "OS", "Kernel", "CPU", "Memory", "Disk", "Shell", "Uptime"],
             color=InfoColorConfig(keys="blue", title="red", separator="blue"),
         ),
     )

@@ -4,8 +4,8 @@ from typing import ClassVar
 from anyfetch.info.modules.base import InfoModule
 
 
-class KernalInfo(InfoModule):
-    key: ClassVar[str] = "Kernal"
+class KernelInfo(InfoModule):
+    key: ClassVar[str] = "Kernel"
 
     def fetch(self) -> str:
         return platform.release()
