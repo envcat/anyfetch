@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from anyfetch.info.registry import InfoRegistry
 
 
-def register_builtin_modules(registry: type[InfoRegistry]) -> None:
+def register_builtin_modules(registry: InfoRegistry) -> None:
     for module_cls in BUILTIN_MODULES:
         registry.register(module_cls)
 

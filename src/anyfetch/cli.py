@@ -12,13 +12,13 @@ from anyfetch.logo.renderer import LogoRenderer
 from anyfetch.renderer import Renderer
 
 
-def build_renderer(config: Config) -> Renderer:
+def build_renderer(config: Config, registry: InfoRegistry) -> Renderer:
     engine = ANSIColorEngine()
     logo_strategy = LogoFactory.create(config.logo)
     logo_colorizer = LogoColorizer(config.logo.color, engine)
     logo_renderer = LogoRenderer(logo_strategy, logo_colorizer)
 
-    info_modules = [InfoRegistry.create(info_module) for info_module in config.info.order]
+    info_modules = [registry.create(key) for key in config.info.order]
     info_colorizer = InfoColorizer(config.info.color, engine)
     info_renderer = InfoRenderer(info_modules, config.info, info_colorizer)
 
@@ -31,7 +31,8 @@ app = App(help="Anyfetch is a tool for fetching system information and displayin
 
 @app.default
 def main():
-    register_builtin_modules(InfoRegistry)
+    registry = InfoRegistry()
+    register_builtin_modules(registry)
 
     config = Config(
         logo=LogoConfig(
@@ -47,7 +48,7 @@ def main():
         ),
     )
 
-    renderer = build_renderer(config)
+    renderer = build_renderer(config, registry)
     renderer.render()
 
 
