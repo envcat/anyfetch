@@ -5,8 +5,10 @@ from anyfetch.color.colorizer import InfoColorizer, LogoColorizer
 from anyfetch.color.engine import ANSIColorEngine
 from anyfetch.config import Config, ImageLogoConfig, InfoColorConfig, InfoConfig, LogoColorConfig, LogoConfig
 from anyfetch.info.modules.cpu import CPUInfo
+from anyfetch.info.modules.disk import DiskInfo
 from anyfetch.info.modules.memory import MemoryInfo
 from anyfetch.info.modules.title import TitleInfo
+from anyfetch.info.modules.uptime import UptimeInfo
 from anyfetch.info.registry import InfoRegistry
 from anyfetch.info.renderer import InfoRenderer
 from anyfetch.layout.left import LeftLayout
@@ -19,7 +21,7 @@ app = App(help="Anyfetch is a tool for fetching system information and displayin
 
 @app.default
 def main():
-    for module in [TitleInfo, CPUInfo, MemoryInfo]:
+    for module in [TitleInfo, CPUInfo, MemoryInfo, DiskInfo, UptimeInfo]:
         InfoRegistry.register(module)
 
     print(CONFIG_FILE_PATH)
@@ -33,7 +35,7 @@ def main():
         ),
         info=InfoConfig(
             separator=": ",
-            order=["title", "CPU", "Memory"],
+            order=["title", "CPU", "Memory", "Disk", "Uptime"],
             color=InfoColorConfig(keys="blue", title="red", separator="blue"),
         ),
     )
