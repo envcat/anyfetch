@@ -7,6 +7,8 @@ name = "anyfetch"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
+license = "MIT"
+license-files = [ "LICENSE" ]
 authors = [ { name = "envcat", email = "266045439+envcat@users.noreply.github.com" } ]
 requires-python = ">=3.13"
 classifiers = [
@@ -46,6 +48,6 @@ venv = ".venv"
 [tool.rumdl]
 disable = [ "MD013" ]
 include = [ "docs/*.md", "README.md" ]
-exclude = [ ".git", "node_modules" ]
+exclude = [ ".git", "node_modules", "LICENSE" ]
 ignore-gitignore = false
 MD044.names = [ "rumdl", "Markdown", "GitHub", "JavaScript", "Node.js", "TypeScript" ]
