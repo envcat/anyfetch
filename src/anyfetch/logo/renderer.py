@@ -10,7 +10,7 @@ class LogoRenderer:
     strategy: LogoSourceStrategy
     colorizer: LogoColorizer
 
-    def render(self):
+    def render(self) -> list[str]:
         raw = self.strategy.render()
         if isinstance(self.strategy, AsciiLogo):
             return [self.colorizer.apply(line) for line in raw]
