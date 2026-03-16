@@ -49,5 +49,5 @@ venv = ".venv"
 disable = [ "MD013" ]
 include = [ "docs/*.md", "README.md" ]
 exclude = [ ".git", "node_modules", "LICENSE" ]
-ignore-gitignore = false
+respect-gitignore = true
 MD044.names = [ "rumdl", "Markdown", "GitHub", "JavaScript", "Node.js", "TypeScript" ]
