@@ -3,13 +3,14 @@ from anyfetch.logo.protocol.iterm import ItermProtocol
 from anyfetch.logo.protocol.kitty import KittyProtocol
 from anyfetch.logo.protocol.sixel import SixelProtocol
 from anyfetch.logo.source.ascii_logo import AsciiLogo
+from anyfetch.logo.source.base import LogoSourceStrategy
 from anyfetch.logo.source.empty_logo import EmptyLogo
 from anyfetch.logo.source.image_logo import ImageLogo
 
 
 class LogoFactory:
     @staticmethod
-    def create(config: LogoConfig):
+    def create(config: LogoConfig) -> LogoSourceStrategy:
         if config.source.startswith("ascii"):
             distro = "DemoLinux" if config.source == "ascii_auto" else config.source.replace("ascii_", "")
             return AsciiLogo(distro)

@@ -19,7 +19,7 @@ class LeftLayout(LayoutStrategy):
     right: int = 0
     padding: int = 4
 
-    def combine(self, logo, info) -> list:
+    def combine(self, logo, info) -> list[str]:
         max_lines = max(len(logo), len(info))
         max_logo_width = max(_visible_width(logo[i]) if i < len(logo) else 0 for i in range(max_lines))
         content = []

@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import ClassVar
 
 
 class ColorEngine(ABC):
-    COLORS: dict
+    COLORS: ClassVar[dict[str, str]]
 
     @abstractmethod
     def color(self, text: str, color: str) -> str:

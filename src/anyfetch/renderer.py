@@ -11,7 +11,7 @@ class Renderer:
     info_renderer: InfoRenderer
     layout: LayoutStrategy
 
-    def render(self):
+    def render(self) -> None:
         logo = self.logo_renderer.render()
         info = self.info_renderer.render()
         lines = self.layout.combine(logo, info)

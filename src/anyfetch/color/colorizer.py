@@ -22,11 +22,11 @@ class InfoColorizer:
     cfg: InfoColorConfig
     engine: ColorEngine
 
-    def color_key(self, key):
+    def color_key(self, key) -> str:
         return self.engine.color(key, self.cfg.keys)
 
-    def color_separator(self, sep):
+    def color_separator(self, sep) -> str:
         return self.engine.color(sep, self.cfg.separator)
 
-    def color_title(self, title):
+    def color_title(self, title) -> str:
         return self.engine.color(title, self.cfg.title)
