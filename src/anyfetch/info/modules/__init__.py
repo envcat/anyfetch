@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from anyfetch.info.modules.base import InfoModule
 from anyfetch.info.modules.cpu import CPUInfo
 from anyfetch.info.modules.disk import DiskInfo
-from anyfetch.info.modules.kernal import KernelInfo
+from anyfetch.info.modules.kernel import KernelInfo
 from anyfetch.info.modules.memory import MemoryInfo
 from anyfetch.info.modules.os import OSInfo
 from anyfetch.info.modules.shell import ShellInfo
