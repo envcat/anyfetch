@@ -10,8 +10,8 @@ class UptimeInfo(InfoModule):
     key: ClassVar[str] = "Uptime"
 
     def fetch(self) -> str:
-        boot = psutil.boot_time()
-        uptime_seconds = int(time.time() - boot)
+        boot_timestamp = psutil.boot_time()
+        uptime_seconds = max(0, int(time.time() - boot_timestamp))
         days = uptime_seconds // 86400
         hours = (uptime_seconds % 86400) // 3600
         minutes = (uptime_seconds % 3600) // 60
