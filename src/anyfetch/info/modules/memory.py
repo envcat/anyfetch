@@ -9,7 +9,8 @@ class MemoryInfo(InfoModule):
     key: ClassVar[str] = "Memory"
 
     def fetch(self):
-        mem = psutil.virtual_memory()
-        used = mem.used / (1024**3)
-        total = mem.total / (1024**3)
-        return f"{used:.2f} GiB / {total:.2f} GiB"
+        memory = psutil.virtual_memory()
+        used = memory.used / (1024**3)
+        total = memory.total / (1024**3)
+        percent = memory.percent
+        return f"{used:.2f} GiB / {total:.2f} GiB ({percent}%)"
