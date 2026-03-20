@@ -7,8 +7,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar
 
-import shellingham
-
 from anyfetch._constants import _INFO_NOT_FOUND
 from anyfetch.info.modules.base import InfoModule
 
@@ -93,10 +91,15 @@ class ShellDetectStrategy(ABC):
 class ProcessStrategy(ShellDetectStrategy):
     def detect_shell(self) -> tuple[str | None, str | None]:
         try:
+            import shellingham
+        except ImportError:
+            return None, None
+
+        try:
             shell_name, shell_executable = shellingham.detect_shell()
             if shell_name and shell_executable:
                 return _normalize_shell_name(shell_name), shell_executable
-        except (RuntimeError, shellingham.ShellDetectionFailure):
+        except (shellingham.ShellDetectionFailure, RuntimeError):
             pass
 
         return None, None
