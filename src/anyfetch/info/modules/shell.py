@@ -3,6 +3,7 @@ import platform
 import subprocess
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar
 
@@ -10,9 +11,6 @@ import shellingham
 
 from anyfetch._constants import _INFO_NOT_FOUND
 from anyfetch.info.modules.base import InfoModule
-
-type ShellName = str
-type ShellExec = str
 
 _SHELL_NAME_ALIASES = {
     "bash": "bash",
@@ -31,7 +29,7 @@ _SHELL_NAME_ALIASES = {
 }
 
 
-def _normalize_shell_name(shell_name: str | None) -> ShellName | None:
+def _normalize_shell_name(shell_name: str | None) -> str | None:
     if not shell_name:
         return None
 
@@ -74,7 +72,7 @@ def _build_xonsh_version(executable: str) -> list[str]:
     return [executable, "-c", "print($XONSH_VERSION)"]
 
 
-_VERSION_COMMAND_BUILDERS: dict[ShellName, VersionCommandBuilder] = {
+_VERSION_COMMAND_BUILDERS: dict[str, VersionCommandBuilder] = {
     "bash": _build_bash_version,
     "zsh": _build_zsh_version,
     "fish": _build_fish_version,
@@ -88,16 +86,16 @@ _VERSION_COMMAND_BUILDERS: dict[ShellName, VersionCommandBuilder] = {
 
 class ShellDetectStrategy(ABC):
     @abstractmethod
-    def detect_shell(self) -> tuple[ShellName | None, ShellExec | None]:
+    def detect_shell(self) -> tuple[str | None, str | None]:
         pass
 
 
 class ProcessStrategy(ShellDetectStrategy):
-    def detect_shell(self) -> tuple[ShellName | None, ShellExec | None]:
+    def detect_shell(self) -> tuple[str | None, str | None]:
         try:
-            shell_name, shell_exec = shellingham.detect_shell()
-            if shell_name and shell_exec:
-                return _normalize_shell_name(shell_name), shell_exec
+            shell_name, shell_executable = shellingham.detect_shell()
+            if shell_name and shell_executable:
+                return _normalize_shell_name(shell_name), shell_executable
         except (RuntimeError, shellingham.ShellDetectionFailure):
             pass
 
@@ -105,7 +103,7 @@ class ProcessStrategy(ShellDetectStrategy):
 
 
 class EnvStrategy(ShellDetectStrategy):
-    def _normalize_shell_exec_to_name(self, path: str | Path) -> ShellName | None:
+    def _normalize_shell_executable_to_name(self, path: str | Path) -> str | None:
         if not str(path).strip():
             return None
 
@@ -113,7 +111,7 @@ class EnvStrategy(ShellDetectStrategy):
 
         return _normalize_shell_name(stem)
 
-    def detect_shell(self) -> tuple[ShellName | None, ShellExec | None]:
+    def detect_shell(self) -> tuple[str | None, str | None]:
         """Attempt to detect the user's shell information from environment variables.
 
         This method is unreliable and should be used as a fallback only.
@@ -123,18 +121,24 @@ class EnvStrategy(ShellDetectStrategy):
         if not system:
             return None, None
 
-        shell_exec = None
+        shell_executable = None
 
         if system == "Windows":
-            shell_exec = os.environ.get("COMSPEC")
+            shell_executable = os.environ.get("COMSPEC")
         else:  # Unix
-            shell_exec = os.environ.get("SHELL")
+            shell_executable = os.environ.get("SHELL")
 
-        if shell_exec:
-            shell_name = self._normalize_shell_exec_to_name(shell_exec)
-            return shell_name, shell_exec
+        if shell_executable:
+            shell_name = self._normalize_shell_executable_to_name(shell_executable)
+            return shell_name, shell_executable
 
         return None, None
+
+
+@dataclass
+class Shell:
+    name: str
+    executable: str | Path | None
 
 
 class ShellInfo(InfoModule):
@@ -144,27 +148,26 @@ class ShellInfo(InfoModule):
         EnvStrategy(),
     )
 
-    def _detect_shell(self) -> tuple[ShellName | None, ShellExec | None]:
+    def _detect_shell(self) -> Shell | None:
         for strategy in self._strategies:
-            shell_name, shell_exec = strategy.detect_shell()
-            if shell_name and shell_exec:
-                return shell_name, shell_exec
-        return None, None
+            name, executable = strategy.detect_shell()
+            if name and executable:
+                return Shell(name, executable)
+        return None
 
-    def _get_shell_version(self, shell_name: str, shell_exec: str | Path | None) -> str | None:
+    def _get_shell_version(self, shell: Shell) -> str | None:
         # Prefer the explicit executable path, fall back to shell name.
-        executable = shell_exec or shell_name
-
+        executable = str(shell.executable) if shell.executable else shell.name
         if not executable:
             return None
 
-        if shell_name == "cmd":  # cmd.exe version aligns with the Windows kernel version.
+        if shell.name == "cmd":  # cmd.exe version aligns with the Windows kernel version.
             return platform.version()
 
-        command_builder = _VERSION_COMMAND_BUILDERS.get(shell_name)
+        command_builder = _VERSION_COMMAND_BUILDERS.get(shell.name)
         if not command_builder:
             return None
-        command = command_builder(str(executable))
+        command = command_builder(executable)
 
         try:
             completed = subprocess.run(command, capture_output=True, text=True, timeout=2, check=True)
@@ -179,14 +182,12 @@ class ShellInfo(InfoModule):
         return first_line or None
 
     def fetch(self) -> str:
-        shell_name, shell_exec = self._detect_shell()
-        if not shell_name:
-            return _INFO_NOT_FOUND
-        if not shell_exec:
+        shell = self._detect_shell()
+        if not shell:
             return _INFO_NOT_FOUND
 
-        version = self._get_shell_version(shell_name, shell_exec)
+        version = self._get_shell_version(shell)
         if version:
-            return f"{shell_name} {version}"
+            return f"{shell.name} {version}"
 
-        return shell_name
+        return shell.name
