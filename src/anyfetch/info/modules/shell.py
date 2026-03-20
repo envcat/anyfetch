@@ -27,7 +27,7 @@ _SHELL_NAME_ALIASES = {
 }
 
 
-def _normalize_shell_name(shell_name: str | None) -> str | None:
+def _normalize_shell_name(shell_name: str) -> str | None:
     if not shell_name:
         return None
 
@@ -82,27 +82,34 @@ _VERSION_COMMAND_BUILDERS: dict[str, VersionCommandBuilder] = {
 }
 
 
+@dataclass
+class Shell:
+    name: str
+    executable: str | Path | None
+
+
 class ShellDetectStrategy(ABC):
     @abstractmethod
-    def detect_shell(self) -> tuple[str | None, str | None]:
+    def detect_shell(self) -> Shell | None:
         pass
 
 
 class ProcessStrategy(ShellDetectStrategy):
-    def detect_shell(self) -> tuple[str | None, str | None]:
+    def detect_shell(self) -> Shell | None:
         try:
             import shellingham
         except ImportError:
-            return None, None
+            return None
 
         try:
-            shell_name, shell_executable = shellingham.detect_shell()
-            if shell_name and shell_executable:
-                return _normalize_shell_name(shell_name), shell_executable
+            name, executable = shellingham.detect_shell()
+            normalized_name = _normalize_shell_name(name)
+            if normalized_name and executable:
+                return Shell(normalized_name, executable)
         except (shellingham.ShellDetectionFailure, RuntimeError):
             pass
 
-        return None, None
+        return None
 
 
 class EnvStrategy(ShellDetectStrategy):
@@ -114,7 +121,7 @@ class EnvStrategy(ShellDetectStrategy):
 
         return _normalize_shell_name(stem)
 
-    def detect_shell(self) -> tuple[str | None, str | None]:
+    def detect_shell(self) -> Shell | None:
         """Attempt to detect the user's shell information from environment variables.
 
         This method is unreliable and should be used as a fallback only.
@@ -122,26 +129,21 @@ class EnvStrategy(ShellDetectStrategy):
         system = platform.system()
 
         if not system:
-            return None, None
+            return None
 
-        shell_executable = None
+        executable = None
 
         if system == "Windows":
-            shell_executable = os.environ.get("COMSPEC")
+            executable = os.environ.get("COMSPEC")
         else:  # Unix
-            shell_executable = os.environ.get("SHELL")
+            executable = os.environ.get("SHELL")
 
-        if shell_executable:
-            shell_name = self._normalize_shell_executable_to_name(shell_executable)
-            return shell_name, shell_executable
+        if executable:
+            name = self._normalize_shell_executable_to_name(executable)
+            if name:
+                return Shell(name, executable)
 
-        return None, None
-
-
-@dataclass
-class Shell:
-    name: str
-    executable: str | Path | None
+        return None
 
 
 class ShellInfo(InfoModule):
@@ -153,9 +155,9 @@ class ShellInfo(InfoModule):
 
     def _detect_shell(self) -> Shell | None:
         for strategy in self._strategies:
-            name, executable = strategy.detect_shell()
-            if name and executable:
-                return Shell(name, executable)
+            shell = strategy.detect_shell()
+            if shell:
+                return shell
         return None
 
     def _get_shell_version(self, shell: Shell) -> str | None:
