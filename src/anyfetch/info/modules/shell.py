@@ -167,12 +167,7 @@ class ShellInfo(InfoModule):
         command = command_builder(str(executable))
 
         try:
-            completed = subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                timeout=2,
-            )
+            completed = subprocess.run(command, capture_output=True, text=True, timeout=2, check=True)
         except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
             return None
 
