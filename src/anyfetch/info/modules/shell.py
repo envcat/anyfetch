@@ -173,10 +173,7 @@ class ShellInfo(InfoModule):
                 text=True,
                 timeout=2,
             )
-        except subprocess.SubprocessError:
-            return None
-
-        if completed.returncode != 0:
+        except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
             return None
 
         output = (completed.stdout or completed.stderr or "").strip()
