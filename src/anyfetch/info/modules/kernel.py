@@ -11,13 +11,7 @@ class KernelInfo(InfoModule):
         system = platform.system()
         release = platform.release()
 
-        if system == "Linux":
-            return f"Linux {release}"
-        elif system == "Darwin":
-            return f"Darwin {release}"
-        elif "BSD" in system:
-            return f"{system} {release}"
-        elif system == "Windows":
+        if system == "Windows":
             version = platform.version()
             try:
                 import winreg
