@@ -10,23 +10,28 @@ class KernelInfo(InfoModule):
     def fetch(self) -> str:
         system = platform.system()
         release = platform.release()
-        version = platform.version()
 
-        if system == "Windows":
-            try:
-                import winreg
-
-                reg_path = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion"
-                with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as key:
-                    ubr, _ = winreg.QueryValueEx(key, "UBR")
-                    return f"WIN32_NT {version}.{ubr}"
-            except (ImportError, OSError):
-                return f"WIN32_NT {version}"
+        if system == "Linux":
+            return f"Linux {release}"
         elif system == "Darwin":
             return f"Darwin {release}"
-        elif system == "Linux":
-            return f"Linux {release}"
         elif "BSD" in system:
             return f"{system} {release}"
+        elif system == "Windows":
+            version = platform.version()
+            try:
+                import winreg
+            except ImportError:
+                return f"WIN32_NT {version}"
+
+            try:
+                reg_path = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+                with winreg.OpenKey(
+                    winreg.HKEY_LOCAL_MACHINE, reg_path, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY
+                ) as key:
+                    ubr, _ = winreg.QueryValueEx(key, "UBR")
+                    return f"WIN32_NT {version}.{ubr}"
+            except OSError:
+                return f"WIN32_NT {version}"
 
         return f"{system} {release}"
